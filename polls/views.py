@@ -2,38 +2,29 @@ from django.conf.urls import url
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.views import generic
 from rest_framework_swagger.views import get_swagger_view
 
 from .models import Question, Choice
 
 
-def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    context = {'latest_question_list': latest_question_list}
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
 
-    # # Get a template, render it and then return an HTTP response
-    # template = loader.get_template('polls/index.html')
-    # return HttpResponse(template.render(context, request))
-
-    # Use shortcut render to get a template, render it and return an HTTP response
-    return render(request, 'polls/index.html', context)
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by('-pub_date')[:5]
 
 
-def detail(request, question_id):
-    # # Use a try/except block to raise a 404 if no question is found
-    # try:
-    #     question = Question.objects.get(pk=question_id)
-    # except Question.DoesNotExist:
-    #     raise Http404("Question does not exist")
-
-    # Use shortcut get_object_or_404 to accomplish the same
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/detail.html', {'question': question})
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
 
 
-def results(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/results.html', {'question': question})
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
 
 
 def vote(request, question_id):
