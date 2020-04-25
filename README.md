@@ -8,7 +8,7 @@ App created by following [the tutorial course available at the django website](h
 To run the app, call the [manage.py](manage.py) script with the `runserver` directive and the port which the webserver should use.
 
 ```bash
-manage.py runserver 8000
+python manage.py runserver 8000
 ```
 
 ## Testing
